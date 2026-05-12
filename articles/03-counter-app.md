@@ -52,11 +52,11 @@ published: false
 
 ## 1-1. なぜMVVMが必要なのか
 
-iOSアプリ開発では、ViewControllerにすべてのコードを書いてしまいがちです。
-いわゆる **Massive ViewController** 問題です。
+学習過程や小規模な開発では、ViewControllerにすべてのコードをまとめて書くことがあります。
+シンプルな画面ではこのアプローチでも十分ですが、プロジェクトが大きくなるにつれて課題が生じることがあります。
 
 ```swift
-// ❌ すべてをViewControllerに詰め込んだ例
+// 従来の手法: ViewControllerにロジックをまとめた例
 class CounterViewController: UIViewController {
     var count = 0  // データ
 
@@ -68,9 +68,9 @@ class CounterViewController: UIViewController {
 }
 ```
 
-このコードには以下の問題があります：
+プロジェクトの規模が大きくなると、以下のような課題が生じやすくなります：
 
-| 問題 | 説明 |
+| 課題 | 説明 |
 |------|------|
 | テストが困難 | UIに依存しているためViewControllerを丸ごと生成する必要がある |
 | 責務が混在 | データ管理、ロジック、UI更新がすべて同じ場所にある |
@@ -660,10 +660,10 @@ XCTAssertEqual(result, expected)
 
 | 利点 | 実感 |
 |------|------|
-| テスト容易性 | UIなしでViewModelのロジックをテストできた |
-| 責務の分離 | ViewControllerにロジックが一切ない |
-| 見通しの良さ | bind()メソッドでデータの流れが一目瞭然 |
-| 再利用性 | ViewModelは別のViewでも使える |
+| テスト容易性 | UIに依存しないため、ViewModelのロジックを単体でテストできた |
+| 責務の分離 | ViewControllerにロジックが一切なく、変更時の影響範囲が限定される |
+| 見通しの良さ | データと表示の依存関係がbind()メソッドに集約され、変更箇所の特定が容易 |
+| 再利用性 | ViewModelがUIに依存しないため、異なるViewからでも同じロジックを利用できる |
 
 ---
 
