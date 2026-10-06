@@ -112,6 +112,9 @@
 			);
 			name = SearchApp;
 			packageProductDependencies = (
+				4B0CF2E12EA7600100F6A1AA /* RxSwift */,
+				4B0CF2E22EA7600200F6A1AA /* RxCocoa */,
+				4B0CF2E32EA7600300F6A1AA /* RxRelay */,
 			);
 			productName = SearchApp;
 			productReference = 320CF21A2EA73C3100F6A1AA /* SearchApp.app */;
@@ -135,6 +138,10 @@
 			);
 			name = SearchAppTests;
 			packageProductDependencies = (
+				4B0CF2E42EA7600400F6A1AA /* RxBlocking */,
+				4B0CF2E52EA7600500F6A1AA /* RxSwift */,
+				4B0CF2E62EA7600600F6A1AA /* RxTest */,
+				4B0CF2E72EA7600700F6A1AA /* RxCocoa */,
 			);
 			productName = SearchAppTests;
 			productReference = 320CF2282EA73C3300F6A1AA /* SearchAppTests.xctest */;
@@ -197,6 +204,9 @@
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 320CF21B2EA73C3100F6A1AA /* Products */;
+			packageReferences = (
+				4B0CF2E02EA7600000F6A1AA /* XCRemoteSwiftPackageReference "RxSwift" */,
+			);
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -583,6 +593,55 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4B0CF2E02EA7600000F6A1AA /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.9.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4B0CF2E12EA7600100F6A1AA /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B0CF2E02EA7600000F6A1AA /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+		4B0CF2E22EA7600200F6A1AA /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B0CF2E02EA7600000F6A1AA /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		4B0CF2E32EA7600300F6A1AA /* RxRelay */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B0CF2E02EA7600000F6A1AA /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxRelay;
+		};
+		4B0CF2E42EA7600400F6A1AA /* RxBlocking */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B0CF2E02EA7600000F6A1AA /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxBlocking;
+		};
+		4B0CF2E52EA7600500F6A1AA /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B0CF2E02EA7600000F6A1AA /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+		4B0CF2E62EA7600600F6A1AA /* RxTest */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B0CF2E02EA7600000F6A1AA /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxTest;
+		};
+		4B0CF2E72EA7600700F6A1AA /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B0CF2E02EA7600000F6A1AA /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 320CF2122EA73C3100F6A1AA /* Project object */;
 }

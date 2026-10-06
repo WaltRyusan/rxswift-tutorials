@@ -206,3 +206,5 @@ fastlane/readme.md
 # git rm -r --cached .
 # git add .
 # git commit -m "Apply .gitignore"
+# Claude Code（worktree の実体が入るため追跡しない）
+.claude/
