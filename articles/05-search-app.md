@@ -18,7 +18,7 @@ published: false
 
 :::message
 📂 **サンプルコード**
-この記事で使用しているコードの完全版は[GitHubリポジトリ](https://github.com/RyuzoHiruma-jinjer/rxswift-tutorials/tree/main/05-SearchApp)で公開しています。
+この記事で使用しているコードの完全版は[GitHubリポジトリ](https://github.com/WaltRyusan/rxswift-tutorials/tree/main/05-SearchApp)で公開しています。
 :::
 
 ## この記事で学ぶこと
@@ -904,7 +904,7 @@ init(searchService: SearchServiceProtocol = GitHubSearchService()) { ... }
 - [第2回: ジェネリクス&エクステンションを理解する](記事URL)
 - [第3回: カウンターアプリでMVVMを学ぶ](記事URL)
 - [第4回: ToDoリストアプリで配列データを管理する](記事URL)
-- [GitHubリポジトリ](https://github.com/RyuzoHiruma-jinjer/rxswift-tutorials)
+- [GitHubリポジトリ](https://github.com/WaltRyusan/rxswift-tutorials)
 - [RxSwift公式ドキュメント](http://reactivex.io/)
 - [RxSwift GitHub](https://github.com/ReactiveX/RxSwift)
 - [RxMarbles](https://rxmarbles.com/) - Operatorの視覚化

@@ -13,7 +13,7 @@ RxSwiftはクセがあり最初はとっつきにくいのですが、理解す�
 
 :::message
 📂 **サンプルコード**
-この記事で使用しているコードの完全版は[GitHubリポジトリ](https://github.com/RyuzoHiruma-jinjer/rxswift-tutorials?tab=readme-ov-file)で公開しています。
+この記事で使用しているコードの完全版は[GitHubリポジトリ](https://github.com/WaltRyusan/rxswift-tutorials?tab=readme-ov-file)で公開しています。
 :::
 
 ### RxSwiftとは

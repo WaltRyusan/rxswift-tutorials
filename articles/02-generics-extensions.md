@@ -15,7 +15,7 @@ published: false
 
 :::message
 📂 **サンプルコード**
-この記事で使用しているコードの完全版は[GitHubリポジトリ](https://github.com/RyuzoHiruma-jinjer/rxswift-tutorials/tree/main/02-Generics-Extensions)で公開しています。
+この記事で使用しているコードの完全版は[GitHubリポジトリ](https://github.com/WaltRyusan/rxswift-tutorials/tree/main/02-Generics-Extensions)で公開しています。
 :::
 
 ## この記事で学ぶこと
@@ -1023,5 +1023,5 @@ extension ObservableType {
 - [Reactive Extensions](http://reactivex.io/)
 
 :::message
-この記事が役に立ったら、[GitHubリポジトリ](https://github.com/RyuzoHiruma-jinjer/rxswift-tutorials)にStarをいただけると嬉しいです！
+この記事が役に立ったら、[GitHubリポジトリ](https://github.com/WaltRyusan/rxswift-tutorials)にStarをいただけると嬉しいです！
 :::
