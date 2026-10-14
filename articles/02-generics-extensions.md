@@ -124,14 +124,13 @@ numbers.subscribe(onNext: { value in
 ```
 
 もし型の情報が失われると、このような安全な計算はできません：
-
 ```swift
 // Any型を使うと型安全性が失われる
 let mixed: [Any] = [1, "Hello", 3]  // Int と String が混在
 
 mixed.forEach { value in
     // value は Any型 → コンパイラが型を判断できない
-    // let doubled = value * 2            // ❌ コンパイルエラー（Anyに * は使えない）
+    // let doubled = value * 2          // ❌ コンパイルエラー（Anyに * は使えない）
     // let doubled = (value as! Int) * 2  // ⚠️ "Hello"で実行時クラッシュ
 }
 ```
