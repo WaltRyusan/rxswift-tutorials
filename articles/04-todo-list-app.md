@@ -16,7 +16,7 @@ published: false
 
 :::message
 📂 **サンプルコード**
-この記事で使用しているコードの完全版は[GitHubリポジトリ](https://github.com/RyuzoHiruma-jinjer/rxswift-tutorials/tree/main/04-TodoListApp)で公開しています。
+この記事で使用しているコードの完全版は[GitHubリポジトリ](https://github.com/WaltRyusan/rxswift-tutorials/tree/main/04-TodoListApp)で公開しています。
 :::
 
 ## この記事で学ぶこと
@@ -731,8 +731,8 @@ addButton.rx.tap
 ## 🔗 関連リンク
 
 - [第1回: Observable、Subject、Disposableを理解する](https://zenn.dev/jinjer_techblog/articles/61ce0010c646b3)
-- [第2回: ジェネリクス&エクステンションを理解する](記事URL)
-- [第3回: カウンターアプリでMVVMを学ぶ](記事URL)
-- [GitHubリポジトリ](https://github.com/RyuzoHiruma-jinjer/rxswift-tutorials)
+- [第2回: ジェネリクス&エクステンションを理解する](https://zenn.dev/jinjer_techblog/articles/14283b21430a07)
+- [第3回: カウンターアプリでMVVMを学ぶ](https://zenn.dev/jinjer_techblog/articles/77a6d658e3e66a)
+- [GitHubリポジトリ](https://github.com/WaltRyusan/rxswift-tutorials)
 - [RxSwift公式ドキュメント](http://reactivex.io/)
 - [RxSwift GitHub](https://github.com/ReactiveX/RxSwift)

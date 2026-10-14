@@ -13,12 +13,13 @@ RxSwiftはクセがあり最初はとっつきにくいのですが、理解す�
 
 :::message
 📂 **サンプルコード**
-この記事で使用しているコードの完全版は[GitHubリポジトリ](https://github.com/RyuzoHiruma-jinjer/rxswift-tutorials?tab=readme-ov-file)で公開しています。
+この記事で使用しているコードの完全版は[GitHubリポジトリ](https://github.com/WaltRyusan/rxswift-tutorials?tab=readme-ov-file)で公開しています。
 :::
 
 ### RxSwiftとは
 
 RxSwiftは、**非同期処理とイベント処理を統一的かつ宣言的に扱えるSwiftライブラリ**です。
+
 そしてMicrosoftで誕生した「Reactive Extensions」という技術を、AppleのSwift言語向けに実装したライブラリです。
 
 :::details Rxの語源と誕生
@@ -36,7 +37,6 @@ Rxは「Reactive Extensions（リアクティブ・エクステンションズ�
 ### RxSwiftのメリット・デメリット
 
 #### メリット
-
 - **非同期処理を簡潔に記述できる** - コールバック地獄から解放される
 - **宣言的な記述** - 「何をするか」を明確に書ける
 - **データバインディングが容易** - UIとロジックの同期が簡単
@@ -44,7 +44,6 @@ Rxは「Reactive Extensions（リアクティブ・エクステンションズ�
 - **コード全体の一貫性** - イベント処理の統一的な扱い
 
 #### デメリット
-
 - **学習コストが高い** - 習得まで1ヶ月程度かかる
 - **デバッグが難しい** - ストリームの流れを追いにくい
 - **メモリ管理に注意が必要** - DisposeBag、weak selfの理解が必須
@@ -73,6 +72,7 @@ Swift公式の「Combine」や「Swift Concurrency（async/await）」が登場�
 ### Swiftコードで実現する
 
 このような仕組みをSwiftで実現するのがRxSwiftです。
+
 先ほどのExcelの例をコードで実現すると以下のようになります。
 
 ```swift
@@ -101,7 +101,7 @@ a1.accept(3) // C1の値: 15 が出力される
 今回の導入編では、RxSwiftの基礎となる以下の概念を学びます：
 
 | 用語 | 日本語訳 | RxSwiftでの概念 |
-|------|---------|----------------|
+| ---- | ---- | ---- |
 | Observable | 観察可能な | イベントを発行するストリームを表現する型。時間とともに値を発行できる |
 | subscribe | 購読する | Observableが発行するイベントを受け取るための操作。イベントストリームの終点として機能する |
 | Subject | 主体 | ObservableとObserverの両方の性質を持つ型。値を手動で流せるObservable |
@@ -169,7 +169,6 @@ observable.subscribe { event in
 :::
 
 このコードでは：
-
 1. `Observable.of(1, 2, 3)` で3つの値を流すObservableを作成
 2. `subscribe` メソッドで購読開始
 3. 各イベントが順番に流れてくる
@@ -402,6 +401,7 @@ RxSwiftには主に以下の種類があります：
 
 :::message alert
 **SubjectとRelayの重要な違い**
+
 - **Subject**：エラーや完了イベントを送信できる（終了する可能性がある）
 - **Relay**：エラーや完了イベントを送信できない（**絶対に終了しない**）
 
@@ -411,7 +411,6 @@ BehaviorRelayは**RxRelay**という別フレームワークで提供されて�
 ### PublishSubject - 購読後のイベントのみ
 
 #### 特徴
-
 - 購読した時点以降のイベントのみを受信
 - 過去のイベントは受け取れない
 - リアルタイムなイベント通知に適している
@@ -464,7 +463,6 @@ subject.onNext("RxSwift")
 ### BehaviorSubject - 最後の値を保持
 
 #### 特徴
-
 - **初期値が必須**
 - 最後に送信された値を保持
 - 新しい購読者は購読時点の最新値を即座に受け取る
@@ -517,7 +515,6 @@ subject.onNext("!")
 ### ReplaySubject - 複数の過去イベントを保持
 
 #### 特徴
-
 - 指定した数の過去のイベントを保持
 - 新しい購読者は過去のイベントをまとめて受け取る
 - 履歴管理や分析に適している
@@ -571,7 +568,6 @@ subject.subscribe(onNext: { value in
 ### BehaviorRelay - エラーなし版（実務推奨）
 
 #### 特徴
-
 - `onError`と`onCompleted`がない（**絶対に終了しない**）
 - BehaviorSubjectと同じく初期値が必須
 - 最新の値を保持
@@ -760,6 +756,7 @@ class ViewController: UIViewController {
 ### Disposableの手動解除（特殊なケース）
 
 DisposeBagを使わず手動で購読を解除もできますが、**これは特殊なケースでのみ使用します。**
+
 一般的なiOSアプリ開発では、DisposeBagによる自動解除が推奨されます。
 
 #### 手動で購読解除する例
@@ -952,19 +949,16 @@ class MyViewController: UIViewController {
 ### 学んだこと
 
 #### 1. Observable - 時間とともに流れるイベント
-
 - `just`, `of`, `from`, `create`などで生成
 - 3種類のイベント: `next`, `error`, `completed`
 - Observableは時間とともにイベントを流すストリーム
 
 #### 2. Observer/Subscribe - 観測する仕組み
-
 - `subscribe(onNext:onError:onCompleted:)`でイベントを受信
 - 必要なイベントだけ処理できる
 - Observableを購読してイベントに反応する
 
 #### 3. Subject と Relay - 双方向の橋渡し
-
 - **Subject（RxSwift提供）**：
   - PublishSubject：購読後のイベントのみ
   - BehaviorSubject：最後の値を保持
@@ -974,7 +968,6 @@ class MyViewController: UIViewController {
 - **選択基準**：終了する可能性があるか→値の保持が必要か→過去値の数
 
 #### 4. Disposable/DisposeBag - メモリ管理
-
 - `disposed(by: disposeBag)`で自動的に購読解除（**基本的な使い方**）
 - `[weak self]`で循環参照を防ぐ
 - ViewControllerなどのライフサイクルに合わせて自動解放
@@ -986,34 +979,29 @@ class MyViewController: UIViewController {
 ## 今後の学習ロードマップ
 
 ### 第2回：ジェネリクス&エクステンション編 ⭐
-
 - **Observable のジェネリクス** - 型安全なストリーム
 - **Reactive Extension** - UIKitコンポーネントへのRx拡張
 - **カスタムExtension** - 独自のRx機能を追加
 
 ### 第3回：カウンターアプリ ⭐
-
 - **RxCocoa の基礎** - UIKitとの連携
 - **基本的な Operator** - `map`, `bind(to:)`
 - **MVVM パターン** - ViewとViewModelの分離
 - **テストの書き方** - RxSwiftアプリのテスト
 
 ### 第4回：ToDoリストアプリ ⭐⭐
-
 - **配列の管理** - `BehaviorRelay<[Todo]>`
 - **Operator の活用** - `filter`, `map`, `scan`
 - **UITableView との連携**
 - **複数のイベントを組み合わせる**
 
 ### 第5回：リアルタイム検索アプリ ⭐⭐⭐
-
 - **高度な Operator** - `debounce`, `distinctUntilChanged`, `flatMap`
 - **API通信** - URLSession + RxSwift
 - **Scheduler** - バックグラウンド処理とUI更新
 - **Hot vs Cold Observable** - 詳細解説
 
 ### 第6回以降
-
 - **タイマー/ストップウォッチアプリ** - 時間ベースのObservable
 - **フォームバリデーションアプリ** - 複数条件のリアルタイムチェック
 - **天気アプリ** - エラーハンドリングと位置情報連携

@@ -3,7 +3,7 @@ title: "【RxSwift入門】③カウンターアプリでMVVMを学ぶ"
 emoji: "🔢"
 type: "tech"
 topics: ["iOS", "Swift", "MVVM", "RxSwift", "RxCocoa"]
-published: false
+published: true
 ---
 
 ## はじめに
@@ -20,7 +20,7 @@ published: false
 
 :::message
 📂 **サンプルコード**
-この記事で使用しているコードの完全版は[GitHubリポジトリ](https://github.com/RyuzoHiruma-jinjer/rxswift-tutorials/tree/main/03-CounterApp)で公開しています。
+この記事で使用しているコードの完全版は[GitHubリポジトリ](https://github.com/WaltRyusan/rxswift-tutorials/tree/main/03-CounterApp)で公開しています。
 :::
 
 ## この記事で学ぶこと
@@ -686,7 +686,7 @@ XCTAssertEqual(result, expected)
 ## 🔗 関連リンク
 
 - [第1回: Observable、Subject、Disposableを理解する](https://zenn.dev/jinjer_techblog/articles/61ce0010c646b3)
-- [第2回: ジェネリクス&エクステンションを理解する](記事URL)
-- [GitHubリポジトリ](https://github.com/RyuzoHiruma-jinjer/rxswift-tutorials)
+- [第2回: ジェネリクス&エクステンションを理解する](https://zenn.dev/jinjer_techblog/articles/14283b21430a07)
+- [GitHubリポジトリ](https://github.com/WaltRyusan/rxswift-tutorials)
 - [RxSwift公式ドキュメント](http://reactivex.io/)
 - [RxSwift GitHub](https://github.com/ReactiveX/RxSwift)

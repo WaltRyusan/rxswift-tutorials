@@ -3,7 +3,7 @@ title: "【RxSwift入門】②ジェネリクス&エクステンションを理�
 emoji: "📱"
 type: "tech"
 topics: ["iOS", "Swift", "MVVM", "RxSwift"]
-published: false
+published: true
 ---
 
 ## はじめに
@@ -15,7 +15,7 @@ published: false
 
 :::message
 📂 **サンプルコード**
-この記事で使用しているコードの完全版は[GitHubリポジトリ](https://github.com/RyuzoHiruma-jinjer/rxswift-tutorials/tree/main/02-Generics-Extensions)で公開しています。
+この記事で使用しているコードの完全版は[GitHubリポジトリ](https://github.com/WaltRyusan/rxswift-tutorials/tree/main/02-GenericsExtensions)で公開しています。
 :::
 
 ## この記事で学ぶこと
@@ -124,14 +124,13 @@ numbers.subscribe(onNext: { value in
 ```
 
 もし型の情報が失われると、このような安全な計算はできません：
-
 ```swift
 // Any型を使うと型安全性が失われる
 let mixed: [Any] = [1, "Hello", 3]  // Int と String が混在
 
 mixed.forEach { value in
     // value は Any型 → コンパイラが型を判断できない
-    // let doubled = value * 2            // ❌ コンパイルエラー（Anyに * は使えない）
+    // let doubled = value * 2          // ❌ コンパイルエラー（Anyに * は使えない）
     // let doubled = (value as! Int) * 2  // ⚠️ "Hello"で実行時クラッシュ
 }
 ```
@@ -1023,5 +1022,5 @@ extension ObservableType {
 - [Reactive Extensions](http://reactivex.io/)
 
 :::message
-この記事が役に立ったら、[GitHubリポジトリ](https://github.com/RyuzoHiruma-jinjer/rxswift-tutorials)にStarをいただけると嬉しいです！
+この記事が役に立ったら、[GitHubリポジトリ](https://github.com/WaltRyusan/rxswift-tutorials)にStarをいただけると嬉しいです！
 :::
