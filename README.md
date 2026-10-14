@@ -7,8 +7,8 @@ RxSwiftを段階的に学ぶためのチュートリアルシリーズです。�
 | No | タイトル | 難易度 | 学ぶ内容 | 記事 | コード |
 |----|---------|-------|---------|------|--------|
 | 1 | 基礎知識編 | ⭐ | Observable, Subject, Disposable | [📝](https://zenn.dev/jinjer_techblog/articles/61ce0010c646b3) | [📂](./01-Basics) |
-| 2 | ジェネリクス&エクステンション編 | ⭐ | Observable\<T>, Reactive Extension | [📝](記事URL) | [📂](./02-GenericsExtensions) |
-| 3 | カウンターアプリ | ⭐ | **MVVM**, RxCocoa, テスト | [📝](記事URL) | [📂](./03-CounterApp) |
+| 2 | ジェネリクス&エクステンション編 | ⭐ | Observable\<T>, Reactive Extension | [📝](https://zenn.dev/jinjer_techblog/articles/14283b21430a07) | [📂](./02-GenericsExtensions) |
+| 3 | カウンターアプリ | ⭐ | **MVVM**, RxCocoa, テスト | [📝](https://zenn.dev/jinjer_techblog/articles/77a6d658e3e66a) | [📂](./03-CounterApp) |
 | 4 | ToDoリストアプリ | ⭐⭐ | **MVVM**, 配列操作, UITableView | [📝](記事URL) | [📂](./04-TodoListApp) |
 | 5 | リアルタイム検索アプリ | ⭐⭐⭐ | **MVVM**, API通信, Scheduler, Hot/Cold | [📝](記事URL) | [📂](./05-SearchApp) |
 
