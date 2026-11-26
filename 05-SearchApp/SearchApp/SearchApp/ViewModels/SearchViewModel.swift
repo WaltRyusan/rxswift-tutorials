@@ -41,7 +41,9 @@ final class SearchViewModel {
             // ④ 最新の検索語だけ通信する（古い通信はキャンセル）
             .flatMapLatest { query -> Observable<[Repository]> in
                 // 空文字なら通信せず、結果を空にする
+                // （通信中に空にされた場合に備えて、ローディングも終了する）
                 guard !query.isEmpty else {
+                    loadingRelay.accept(false)
                     return .just([])
                 }
                 loadingRelay.accept(true)
