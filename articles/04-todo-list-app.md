@@ -3,7 +3,7 @@ title: "【RxSwift入門】④ToDoリストアプリで配列データを管理�
 emoji: "✅"
 type: "tech"
 topics: ["iOS", "Swift", "MVVM", "RxSwift", "RxCocoa"]
-published: false
+published: true
 ---
 
 ## はじめに
@@ -72,9 +72,9 @@ published: false
 ├──────────────────────────┤
 │  残り2件                  │ ← 未完了件数
 ├──────────────────────────┤
-│ ☐ 牛乳を買う              │ ← 未完了Todo
-│ ☐ レポートを書く           │ ← 未完了Todo
-│ ✓ 部屋を掃除する      ✓   │ ← 完了Todo（取り消し線）
+│  牛乳を買う               │ ← 未完了Todo
+│  レポートを書く            │ ← 未完了Todo
+│  部屋を掃除する       ✓   │ ← 完了Todo（取り消し線 + チェックマーク）
 └──────────────────────────┘
 ```
 
@@ -414,6 +414,8 @@ filter(!isEmpty):        "牛乳"  "牛乳を買う"     (除外)
 
 ## 5-3. TodoListViewController の実装
 
+UIパーツの生成と `setupUI()`（AutoLayout）は省略しています。全体はGitHubリポジトリを参照してください。
+
 ```swift
 import UIKit
 import RxSwift
@@ -470,6 +472,13 @@ final class TodoListViewController: UIViewController {
         tableView.rx.itemSelected
             .map { $0.row }
             .bind(to: viewModel.toggleTodo)
+            .disposed(by: disposeBag)
+
+        // セル選択解除（ハイライトを消す）
+        tableView.rx.itemSelected
+            .subscribe(onNext: { [weak self] indexPath in
+                self?.tableView.deselectRow(at: indexPath, animated: true)
+            })
             .disposed(by: disposeBag)
 
         // スワイプ削除
@@ -650,7 +659,8 @@ Test Suite 'TodoListViewModelTests' started
 ✅ testCountTextAfterDelete
 ✅ testToggleOutOfBoundsDoesNotCrash
 ✅ testDeleteOutOfBoundsDoesNotCrash
-Test Suite 'TodoListViewModelTests' passed (13 tests)
+✅ testComplexOperations
+Test Suite 'TodoListViewModelTests' passed (14 tests)
 ```
 
 ---
@@ -708,7 +718,7 @@ addButton.rx.tap
 | UI | UILabel + UIButton (Xib) | UITableView + UITextField (プログラマティック) |
 | Model | なし | Todo構造体 |
 | Operator | map | map, filter, withLatestFrom |
-| テスト数 | 9件 | 13件 |
+| テスト数 | 10件 | 14件 |
 
 ---
 
@@ -733,6 +743,7 @@ addButton.rx.tap
 - [第1回: Observable、Subject、Disposableを理解する](https://zenn.dev/jinjer_techblog/articles/61ce0010c646b3)
 - [第2回: ジェネリクス&エクステンションを理解する](https://zenn.dev/jinjer_techblog/articles/14283b21430a07)
 - [第3回: カウンターアプリでMVVMを学ぶ](https://zenn.dev/jinjer_techblog/articles/77a6d658e3e66a)
+- [第5回: リアルタイム検索アプリでAPI通信とSchedulerを学ぶ](https://zenn.dev/jinjer_techblog/articles/8069a7a2fad8e2)
 - [GitHubリポジトリ](https://github.com/WaltRyusan/rxswift-tutorials)
 - [RxSwift公式ドキュメント](http://reactivex.io/)
 - [RxSwift GitHub](https://github.com/ReactiveX/RxSwift)
