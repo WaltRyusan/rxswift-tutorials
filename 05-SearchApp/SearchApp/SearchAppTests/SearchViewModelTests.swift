@@ -93,6 +93,36 @@ final class SearchViewModelTests: XCTestCase {
         XCTAssertTrue(mock.receivedQueries.isEmpty)
     }
 
+    /// 通信中に検索語を空にしたらローディングが止まること
+    func testClearingQueryWhileLoadingStopsLoading() {
+        let scheduler = TestScheduler(initialClock: 0, resolution: 0.001)
+        let mock = MockSearchService()
+        mock.stubNeverResponds = true
+        let viewModel = SearchViewModel(searchService: mock, scheduler: scheduler)
+        let disposeBag = DisposeBag()
+        let loadingObserver = scheduler.createObserver(Bool.self)
+
+        viewModel.repositories
+            .drive(onNext: { _ in })
+            .disposed(by: disposeBag)
+
+        viewModel.isLoading
+            .drive(loadingObserver)
+            .disposed(by: disposeBag)
+
+        // "RxSwift" で通信を開始し、結果が返る前に検索語を空にする
+        scheduler.createColdObservable([
+            .next(100, "RxSwift"),
+            .next(500, "")
+        ])
+        .bind(to: viewModel.searchText)
+        .disposed(by: disposeBag)
+
+        scheduler.start()
+
+        XCTAssertEqual(loadingObserver.events.map { $0.value.element }, [true, false])
+    }
+
     /// 検索結果がそのまま出力に流れること
     func testSearchResultIsEmitted() {
         let mock = MockSearchService()

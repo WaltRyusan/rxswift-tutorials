@@ -473,7 +473,9 @@ final class SearchViewModel {
             // ④ 最新の検索語だけ通信する（古い通信はキャンセル）
             .flatMapLatest { query -> Observable<[Repository]> in
                 // 空文字なら通信せず、結果を空にする
+                // （通信中に空にされた場合に備えて、ローディングも終了する）
                 guard !query.isEmpty else {
+                    loadingRelay.accept(false)
                     return .just([])
                 }
                 loadingRelay.accept(true)
@@ -690,11 +692,16 @@ final class MockSearchService: SearchServiceProtocol {
     /// 返す結果を差し替えられるようにする
     var stubResult: [Repository] = []
     var stubError: Error?
+    /// true にすると結果を返さない（通信中のまま止まる状態を再現する）
+    var stubNeverResponds = false
     /// どんなクエリで呼ばれたかを記録する
     private(set) var receivedQueries: [String] = []
 
     func searchRepositories(query: String) -> Single<[Repository]> {
         receivedQueries.append(query)
+        if stubNeverResponds {
+            return .never()
+        }
         if let error = stubError {
             return .error(error)
         }
@@ -817,6 +824,7 @@ func testSearchResultIsEmitted() {
 | debounceで1回だけ検索 | 300ms以内に3回入力 | 検索は1回だけ呼ばれる |
 | 同じ語は無視 | 300ms以上空けて "RxSwift" を2回 | 検索は1回だけ |
 | 空文字なら通信しない | "   "（空白のみ） | 検索が呼ばれない |
+| 通信中に空にしたらローディング終了 | "RxSwift"（応答なし）→ "" | isLoading が true → false |
 | 検索結果が流れる | "RxSwift" | 結果がrepositoriesに届く |
 | エラーでもクラッシュしない | stubError設定 | errorMessageが流れる |
 
@@ -827,9 +835,10 @@ Test Suite 'SearchViewModelTests' started
 ✅ testDebounceCallsSearchOnce
 ✅ testDistinctUntilChanged
 ✅ testEmptyQueryDoesNotCallService
+✅ testClearingQueryWhileLoadingStopsLoading
 ✅ testSearchResultIsEmitted
 ✅ testErrorEmitsMessageAndDoesNotCrash
-Test Suite 'SearchViewModelTests' passed (5 tests)
+Test Suite 'SearchViewModelTests' passed (6 tests)
 ```
 
 ---
