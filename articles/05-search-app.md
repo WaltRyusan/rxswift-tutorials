@@ -3,7 +3,7 @@ title: "【RxSwift入門】⑤リアルタイム検索アプリでAPI通信とSc
 emoji: "🔍"
 type: "tech"
 topics: ["iOS", "Swift", "MVVM", "RxSwift", "RxCocoa"]
-published: false
+published: true
 ---
 
 ## はじめに
@@ -72,11 +72,11 @@ published: false
 
 ```
 ┌──────────────────────────┐
+│  リポジトリ検索            │ ← ナビゲーションバー
+├──────────────────────────┤
 │  🔍 RxSwift            　  │ ← 検索バー（UISearchBar）
 ├──────────────────────────┤
-│  ⏳ 検索中...              │ ← ローディング表示
-├──────────────────────────┤
-│ RxSwift/RxSwift           │ ← リポジトリ名
+│ ReactiveX/RxSwift         │ ← リポジトリ名
 │ ⭐ 24000  Reactive...      │ ← スター数 + 説明
 ├──────────────────────────┤
 │ RxSwiftCommunity/...      │
@@ -85,7 +85,7 @@ published: false
 ```
 
 - 検索バーに文字を打つと、**入力が落ち着いた瞬間** に自動で検索
-- 検索中はローディングを表示
+- 検索中は画面中央にローディング（インジケーター）を表示
 - 文字を消すと結果もクリア
 - 通信が失敗してもクラッシュせず、メッセージを表示
 
@@ -125,7 +125,7 @@ open 05-SearchApp/SearchApp/SearchApp.xcodeproj
 | **RxCocoa** | UIKit / URLSession とのバインディング | SearchApp |
 | **RxRelay** | PublishRelay、BehaviorRelay | SearchApp |
 | **RxTest** | テスト用（時間を仮想的に進める TestScheduler） | SearchAppTests |
-| **RxBlocking** | テスト用（第4回で使用。今回は補助的） | SearchAppTests |
+| **RxBlocking** | テスト用（第4回で使用。今回のテストでは使っていません） | SearchAppTests |
 
 :::message
 💡 **RxCocoaにURLSession拡張が入っている**
@@ -183,12 +183,13 @@ GET https://api.github.com/search/repositories?q=RxSwift
 ## 3-2. Repository構造体
 
 `Decodable` に準拠させて、JSONを構造体に変換できるようにします。
+あわせて `Equatable` にも準拠させ、テストで値を比較できるようにしておきます。
 
 ```swift
 import Foundation
 
 /// 検索結果のリポジトリ1件
-struct Repository: Decodable {
+struct Repository: Decodable, Equatable {
     let fullName: String
     let description: String?
     let stargazersCount: Int
@@ -252,6 +253,11 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+/// 通信で起こりうるエラー
+enum SearchError: Error {
+    case invalidURL
+}
+
 final class GitHubSearchService: SearchServiceProtocol {
 
     func searchRepositories(query: String) -> Single<[Repository]> {
@@ -274,11 +280,6 @@ final class GitHubSearchService: SearchServiceProtocol {
             .map { $0.items }                      // items配列だけ取り出す
             .asSingle()                            // Single<[Repository]> に変換
     }
-}
-
-/// 通信で起こりうるエラー
-enum SearchError: Error {
-    case invalidURL
 }
 ```
 
@@ -405,18 +406,32 @@ debounce:  ───────────────────────
 | `subscribe(on:)` | 処理を **開始** するスレッド | 通信・重い計算はバックグラウンド |
 | `observe(on:)` | 値を **受け取る** スレッド | UI更新はメインスレッド |
 
+今回のアプリでは、この2つを明示的に書かなくてもスレッドが正しく切り替わります。
+
 ```
-[メインスレッド] 検索語入力
-        ↓ observe(on: バックグラウンド)
+[メインスレッド] 検索語入力 → debounce（MainScheduler）
+        ↓ URLSession.rx.data が URLSession のバックグラウンドキューで通信
 [バックグラウンド] API通信・JSONデコード（重い処理）
-        ↓ observe(on: メイン)
+        ↓ asDriver が自動でメインスレッドに戻す
 [メインスレッド] tableView更新（UI）
 ```
+
+| 処理 | 実行されるスレッド | 決めているもの |
+| ---- | ---- | ---- |
+| debounce のタイマー | メイン | ViewModelに注入した `scheduler`（デフォルトは `MainScheduler.instance`） |
+| API通信・JSONデコード | バックグラウンド | `URLSession` が自前のキューでレスポンスを返す |
+| UI更新 | メイン | `asDriver` / `asSignal`（内部で `observe(on: MainScheduler)` している） |
 
 :::message
 💡 **Driverを使うと自動でメインに戻る**
 今回は出力を `Driver` にするので、UIに届く時点では自動的にメインスレッドになっています。
 そのため `observe(on: MainScheduler.instance)` を明示しなくても安全ですが、「どこで何のスレッドを使っているか」を意識することが大切です。
+たとえば通信の後に重い加工処理を足す場合は、`observe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))` でバックグラウンドに逃がす、といった使い分けをします。
+:::
+
+:::message
+💡 **Schedulerを引数で受け取る理由**
+`debounce` に渡す `scheduler` をイニシャライザで受け取れるようにしているのは、テストで仮想時間の `TestScheduler` に差し替えるためです（8-3で使います）。
 :::
 
 ## 5-5. SearchViewModel の実装
@@ -435,9 +450,6 @@ final class SearchViewModel {
     let repositories: Driver<[Repository]>
     let isLoading: Driver<Bool>
     let errorMessage: Signal<String>
-
-    // MARK: - Private
-    private let disposeBag = DisposeBag()
 
     // MARK: - Init（依存性注入）
     init(
@@ -497,7 +509,7 @@ final class SearchViewModel {
         ↓ catch でエラーを吸収
 ⑤ 結果 [Repository] を repositories(Driver) に流す
         ↓ bind
-⑥ UISearchBar / UITableView が自動更新
+⑥ UITableView / ローディング表示が自動更新
 ```
 
 ---
@@ -505,6 +517,8 @@ final class SearchViewModel {
 # 6. ViewControllerを作る（UISearchBar × UITableView）
 
 ## 6-1. Input / Output のバインド
+
+UIパーツの生成と `setupUI()`（AutoLayout）は省略しています。全体はGitHubリポジトリを参照してください。
 
 ```swift
 import UIKit
@@ -514,9 +528,9 @@ import RxCocoa
 final class SearchViewController: UIViewController {
 
     // MARK: - UI Components
-    private let searchBar = UISearchBar()
-    private let tableView = UITableView()
-    private let loadingView = UIActivityIndicatorView(style: .medium)
+    private let searchBar: UISearchBar = { /* ... */ }()
+    private let tableView: UITableView = { /* ... */ }()
+    private let loadingView: UIActivityIndicatorView = { /* ... */ }()
 
     // MARK: - Properties
     private let viewModel = SearchViewModel()
@@ -550,6 +564,7 @@ final class SearchViewController: UIViewController {
                 var content = cell.defaultContentConfiguration()
                 content.text = repository.fullName
                 content.secondaryText = "⭐ \(repository.stargazersCount)  \(repository.description ?? "")"
+                content.secondaryTextProperties.numberOfLines = 2
                 cell.contentConfiguration = content
             }
             .disposed(by: disposeBag)
@@ -720,7 +735,7 @@ final class SearchViewModelTests: XCTestCase {
             .drive(onNext: { _ in })
             .disposed(by: disposeBag)
 
-        // 100,200,250ms に高速で入力（すべて300ms以内）
+        // 100,200,250 の時刻に高速で入力（すべて300ms以内）
         scheduler.createColdObservable([
             .next(100, "R"),
             .next(200, "Rx"),
@@ -800,10 +815,10 @@ func testSearchResultIsEmitted() {
 | テスト名 | Input | 期待するOutput |
 | ---- | ---- | ---- |
 | debounceで1回だけ検索 | 300ms以内に3回入力 | 検索は1回だけ呼ばれる |
+| 同じ語は無視 | 300ms以上空けて "RxSwift" を2回 | 検索は1回だけ |
+| 空文字なら通信しない | "   "（空白のみ） | 検索が呼ばれない |
 | 検索結果が流れる | "RxSwift" | 結果がrepositoriesに届く |
-| 空文字で結果クリア | "" | repositoriesが空になる |
-| 同じ語は無視 | "Rx" → "Rx" | 検索は1回だけ |
-| エラーでもクラッシュしない | stubError設定 | errorMessageが流れ、空配列になる |
+| エラーでもクラッシュしない | stubError設定 | errorMessageが流れる |
 
 ## 8-6. テスト実行結果
 
@@ -847,8 +862,11 @@ searchText
 ### 依存性注入でテスト可能にする
 
 ```swift
-// 本番: 本物のService / テスト: Mockを注入
-init(searchService: SearchServiceProtocol = GitHubSearchService()) { ... }
+// 本番: 本物のService + MainScheduler / テスト: Mock + TestScheduler を注入
+init(
+    searchService: SearchServiceProtocol = GitHubSearchService(),
+    scheduler: SchedulerType = MainScheduler.instance
+) { ... }
 ```
 
 ## 9-2. 第4回 vs 第5回 比較
@@ -857,10 +875,10 @@ init(searchService: SearchServiceProtocol = GitHubSearchService()) { ... }
 | ---- | ---- | ---- |
 | データ取得 | ローカル | Web API（非同期） |
 | Operator | map, filter, withLatestFrom | debounce, distinctUntilChanged, flatMapLatest |
-| スレッド | メインのみ | Scheduler で使い分け |
+| スレッド | メインのみ | メイン + バックグラウンド（Driverでメインに戻す） |
 | 出力の型 | Observable | Driver / Signal |
 | 設計 | ViewModelがデータ保持 | Service層 + 依存性注入 |
-| テスト | RxBlocking | RxBlocking + RxTest(TestScheduler) |
+| テスト | RxBlocking | RxTest(TestScheduler) + XCTestExpectation |
 
 ## 9-3. よくあるハマりどころ
 
@@ -892,6 +910,9 @@ init(searchService: SearchServiceProtocol = GitHubSearchService()) { ... }
 このシリーズを通して、単なる文法だけでなく、
 **「イベントの流れを宣言的に組み立てる」というRxSwiftの考え方** を体験してもらえたと思います。
 
+第1回でも触れたとおり、このシリーズの目的は、CombineやSwift Concurrency（async/await）がある今でも **RxSwiftで書かれた既存のコードベースを読み書きできるようになること** です。
+jinjerをはじめ、RxSwiftで作られた大規模なiOSプロダクトはまだ多く、保守や機能追加のたびにRxSwiftのコードに向き合うことになります。今回までの内容が、既存コードを読み解く足がかりになればうれしいです。
+
 ここから先は、実際のアプリで使われる `RxDataSources`（複雑なテーブル/コレクション）、
 `RxRealm` / `RxCoreData`（永続化との連携）、そして **async/await との併用** など、
 発展的なトピックが待っています。ぜひ自分のアプリで手を動かしてみてください。
@@ -903,7 +924,7 @@ init(searchService: SearchServiceProtocol = GitHubSearchService()) { ... }
 - [第1回: Observable、Subject、Disposableを理解する](https://zenn.dev/jinjer_techblog/articles/61ce0010c646b3)
 - [第2回: ジェネリクス&エクステンションを理解する](https://zenn.dev/jinjer_techblog/articles/14283b21430a07)
 - [第3回: カウンターアプリでMVVMを学ぶ](https://zenn.dev/jinjer_techblog/articles/77a6d658e3e66a)
-- [第4回: ToDoリストアプリで配列データを管理する](記事URL)
+- [第4回: ToDoリストアプリで配列データを管理する](https://zenn.dev/jinjer_techblog/articles/6b6ade4e094e71)
 - [GitHubリポジトリ](https://github.com/WaltRyusan/rxswift-tutorials)
 - [RxSwift公式ドキュメント](http://reactivex.io/)
 - [RxSwift GitHub](https://github.com/ReactiveX/RxSwift)
